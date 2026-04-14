@@ -37,5 +37,4 @@ public class ProducerAwardIntervalCsvIntegrationTest {
                 .andExpect(jsonPath("$.max[0].previousWin").value(2002))
                 .andExpect(jsonPath("$.max[0].followingWin").value(2015));
     }
-
 }

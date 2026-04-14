@@ -47,20 +47,16 @@ class ProducerAwardIntervalScenarioIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-
                 .andExpect(jsonPath("$.min").isArray())
                 .andExpect(jsonPath("$.min.length()").value(2))
-
                 .andExpect(jsonPath("$.min[0].producer").value("Producer A"))
                 .andExpect(jsonPath("$.min[0].interval").value(1))
                 .andExpect(jsonPath("$.min[0].previousWin").value(2000))
                 .andExpect(jsonPath("$.min[0].followingWin").value(2001))
-
                 .andExpect(jsonPath("$.min[1].producer").value("Producer B"))
                 .andExpect(jsonPath("$.min[1].interval").value(1))
                 .andExpect(jsonPath("$.min[1].previousWin").value(2010))
                 .andExpect(jsonPath("$.min[1].followingWin").value(2011))
-
                 .andExpect(jsonPath("$.max").isArray())
                 .andExpect(jsonPath("$.max.length()").value(1))
                 .andExpect(jsonPath("$.max[0].producer").value("Producer C"))
@@ -74,10 +70,8 @@ class ProducerAwardIntervalScenarioIntegrationTest {
     void shouldReturnTieForMaxInterval() throws Exception {
         saveMovie(2000, "Film 1", "Studio 1", "Producer A", true);
         saveMovie(2010, "Film 2", "Studio 1", "Producer A", true);
-
         saveMovie(1995, "Film 3", "Studio 2", "Producer B", true);
         saveMovie(2005, "Film 4", "Studio 2", "Producer B", true);
-
         saveMovie(2018, "Film 5", "Studio 3", "Producer C", true);
         saveMovie(2019, "Film 6", "Studio 3", "Producer C", true);
 
@@ -105,7 +99,6 @@ class ProducerAwardIntervalScenarioIntegrationTest {
         saveMovie(1990, "Film 1", "Studio 1", "Producer A", true);
         saveMovie(1993, "Film 2", "Studio 1", "Producer A", true);
         saveMovie(2000, "Film 3", "Studio 1", "Producer A", true);
-
         saveMovie(2001, "Film 4", "Studio 2", "Producer B", true);
         saveMovie(2002, "Film 5", "Studio 2", "Producer B", true);
 
