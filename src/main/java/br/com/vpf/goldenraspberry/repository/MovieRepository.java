@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
-    List<Movie> findByWinnerTrueOrderByYearAsc();
-
     @Query("""
            select m.year as year, m.producers as producers
            from Movie m

@@ -35,7 +35,7 @@ public class CsvDataLoader implements CommandLineRunner {
         loadCsv();
     }
 
-    public void loadCsv() throws IOException {
+    private void loadCsv() throws IOException {
         ClassPathResource resource = new ClassPathResource("data/Movielist.csv");
 
         try (Reader reader = new BufferedReader(

@@ -2,7 +2,6 @@ package br.com.vpf.goldenraspberry.service;
 
 import br.com.vpf.goldenraspberry.dto.ProducerIntervalItemResponse;
 import br.com.vpf.goldenraspberry.dto.ProducerIntervalResponse;
-import br.com.vpf.goldenraspberry.entity.Movie;
 import br.com.vpf.goldenraspberry.repository.MovieRepository;
 import br.com.vpf.goldenraspberry.repository.projection.MovieAwardProjection;
 import org.springframework.stereotype.Service;
