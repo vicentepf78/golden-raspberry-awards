@@ -2,6 +2,8 @@
 
 API RESTful desenvolvida com Spring Boot para leitura da lista de indicados e vencedores da categoria **Pior Filme** do Golden Raspberry Awards.
 
+---
+
 ## Tecnologias
 
 - Java 21
@@ -12,13 +14,17 @@ API RESTful desenvolvida com Spring Boot para leitura da lista de indicados e ve
 - Maven
 - Testes de integração com Spring Boot Test + MockMvc
 
+---
+
 ## Objetivo da aplicação
 
 - Ler um arquivo CSV contendo os filmes
 - Importar os dados automaticamente ao iniciar a aplicação
 - Expor um endpoint REST para identificar:
-  - o produtor com **menor intervalo** entre dois prêmios consecutivos
-  - o produtor com **maior intervalo** entre dois prêmios consecutivos
+    - o produtor com **menor intervalo** entre dois prêmios consecutivos
+    - o produtor com **maior intervalo** entre dois prêmios consecutivos
+
+---
 
 ## Endpoint principal
 
@@ -51,23 +57,27 @@ GET /api/awards/producers/intervals
 
 ## Regra de cálculo
 
-A API considera apenas filmes vencedores (`winner = yes`).
+Regra de cálculo
+
+A API considera apenas filmes vencedores (winner = yes).
 
 Para cada produtor:
-1. Os anos de vitória são agrupados e ordenados.
-2. São calculados os intervalos entre vitórias consecutivas.
-3. A resposta retorna:
-   - os produtores com menor intervalo;
-   - os produtores com maior intervalo.
 
-### Exemplo
+1. os filmes vencedores são processados em ordem crescente de ano;
+2. o sistema mantém apenas o último ano de vitória de cada produtor;
+3. ao encontrar uma nova vitória do mesmo produtor, o intervalo é calculado imediatamente;
+4. os menores e maiores intervalos são atualizados durante o processamento.
+
+Exemplo:
 
 Se um produtor venceu em:
+
 - 1990
 - 1991
 - 2000
 
 Os intervalos calculados serão:
+
 - 1991 - 1990 = 1
 - 2000 - 1991 = 9
 
@@ -81,14 +91,25 @@ A aplicação trata corretamente formatos como:
 - `Producer A and Producer B`
 - `Producer A, Producer B and Producer C`
 
+## Otimizações aplicadas
+
+A implementação foi otimizada para melhorar performance e uso de memória:
+
+- Consulta ao banco utiliza projection, trazendo apenas os campos necessários (year e producers); 
+- Utilização de algoritmo de varredura única (single-pass);
+- Não há criação de listas intermediárias com todos os intervalos; 
+- Cálculo de mínimo e máximo ocorre em tempo real durante o processamento;
+- Redução significativa de loops no código.
+
 ## Estrutura da solução
 
-- `CsvDataLoader`: importa o CSV no startup
-- `Movie`: entidade persistida no banco H2
-- `MovieRepository`: acesso aos dados
-- `ProducerAwardIntervalService`: lógica de cálculo dos intervalos
-- `ProducerAwardIntervalController`: endpoint REST
-- Testes de integração para validação do comportamento
+- `CsvDataLoader` → responsável por importar o CSV na inicialização
+- `Movie` → entidade persistida no banco H2
+- `MovieRepository` → acesso aos dados com query otimizada
+- `MovieAwardProjection` → projection para buscar apenas os campos necessários
+- `ProducerAwardIntervalService` → regra de negócio (cálculo dos intervalos)
+- `ProducerAwardIntervalController` → endpoint REST
+- Testes de integração → validação completa da aplicação
 
 ## Pré-requisitos
 
@@ -127,14 +148,17 @@ Valida cenários como:
 - produtor com múltiplas vitórias;
 - múltiplos produtores por filme;
 - nenhum produtor com mais de uma vitória.
+- dados fora de ordem;
+- tratamento de espaços extras.
 
 Nos testes de cenário:
 - o banco H2 é controlado manualmente;
 - o carregamento automático do CSV é desabilitado com o profile `test`.
+- garante isolamento e previsibilidade dos testes.
 
 ## Robustez da solução
 
-A lógica da aplicação foi implementada de forma genérica, garantindo funcionamento correto independentemente dos dados de entrada.
+A lógica foi implementada de forma genérica, garantindo funcionamento correto independentemente do conjunto de dados.
 
 A API suporta cenários como:
 - empates no menor intervalo;
@@ -144,6 +168,14 @@ A API suporta cenários como:
 - filmes com múltiplos produtores;
 - dados desordenados;
 - espaços extras no CSV.
+
+## Maturidade REST
+
+A API foi implementada seguindo o `nível 2 do Modelo de Maturidade de Richardson`:
+
+- uso de recursos REST bem definidos;
+- utilização correta de métodos HTTP (GET);
+- respostas em JSON com status HTTP apropriados.
 
 ## Observações
 
@@ -155,3 +187,4 @@ src/main/resources/data/Movielist.csv
 
 - O banco é recriado em memória a cada execução.
 - Não é necessário instalar banco de dados externo.
+- A aplicação é totalmente autocontida.
